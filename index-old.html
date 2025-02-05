@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SendGrid Event Webhook</title>
+  </head>
+  <body>
+    <p id="message"></p>
+    <script
+      src="https://cdn.socket.io/4.4.0/socket.io.min.js"
+      integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const socket = io();
+      var message = document.getElementById('message');
+      socket.on('message', (msg) => {
+        message.innerHTML += msg;
+      });
+    </script>
+  </body>
+</html>

@@ -1,22 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
-    <meta charset="utf-8" />
-    <title>SendGrid Event Webhook</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocketチャットアプリ</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      #chat {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        width: 100%;
+        height: 300px;
+        overflow-y: scroll;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      input[type='text'] {
+        width: 70%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        margin-right: 10px;
+        transition: border 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      input[type='text']:focus {
+        border-color: #4c8bf5;
+        outline: none;
+      }
+
+      button {
+        width: 20%;
+        padding: 10px;
+        background-color: #4c8bf5;
+        border: none;
+        border-radius: 25px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        background-color: #3a6fd3;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button:active {
+        background-color: #355bb3;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'Arial', sans-serif;
+        color: #333;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      #message-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
   </head>
   <body>
-    <p id="message"></p>
-    <script
-      src="https://cdn.socket.io/4.4.0/socket.io.min.js"
-      integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj"
-      crossorigin="anonymous"
-    ></script>
+    <div class="container">
+      <h1>最果てチャット💬（WebSocketお試し）</h1>
+      <div id="chat"></div>
+      <div id="message-container">
+        <input type="text" id="message" placeholder="メッセージを入力..." />
+        <button id="send">送信</button>
+      </div>
+    </div>
+
     <script>
-      const socket = io();
-      var message = document.getElementById('message');
-      socket.on('message', (msg) => {
-        message.innerHTML += msg;
+      const socket = new WebSocket('https://ws-example.onrender.com');
+      const chatDiv = document.getElementById('chat');
+      const messageInput = document.getElementById('message');
+      const sendButton = document.getElementById('send');
+
+      // ランダムな絵文字を取得する関数
+      const getRandomEmoji = () => {
+        const emojis = [
+          '😊',
+          '🚀',
+          '🌟',
+          '😎',
+          '🎉',
+          '🔥',
+          '💡',
+          '✨',
+          '🍛',
+          '🌈',
+          '👶',
+          '😸',
+          '🐶',
+          '👽',
+          '🐤',
+          '💪',
+          '👼',
+          '💃',
+          '🦄',
+          '🐣',
+          '🦜',
+          '🐸',
+          '🐬',
+          '🍣',
+          '🦐',
+          '🍼',
+        ];
+        return emojis[Math.floor(Math.random() * emojis.length)];
+      };
+      const ICON = getRandomEmoji();
+
+      socket.addEventListener('open', () => {
+        console.log('サーバーに接続されました');
+        addMessage('サーバーに接続されました');
       });
+
+      socket.addEventListener('message', (event) => {
+        if (typeof event.data === 'string') {
+          addMessage('受信: ' + event.data);
+        } else {
+          const reader = new FileReader();
+          reader.onload = function () {
+            addMessage('受信: ' + reader.result);
+          };
+          reader.readAsText(event.data); // Blobをテキストとして読み取る
+        }
+      });
+
+      socket.addEventListener('close', () => {
+        console.log('サーバーから切断されました');
+        addMessage('サーバーから切断されました');
+      });
+
+      sendButton.addEventListener('click', () => {
+        sendMessage();
+      });
+
+      messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          sendMessage();
+        }
+      });
+
+      function sendMessage() {
+        const message = messageInput.value;
+        if (message !== '') {
+          socket.send(ICON + message);
+          messageInput.value = '';
+        }
+      }
+
+      function addMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        chatDiv.appendChild(messageElement);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      }
     </script>
   </body>
 </html>
