@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
   });
   socket.on('sendAnswer', (answer) => {});
   socket.on('startGame', () => {
+    console.log(`server startGame`);
     const clientsCount = io.engine.clientsCount;
     console.log(`Number of connected clients: ${clientsCount}`);
     // console.log(socket.client.conn.server.clientsCount);

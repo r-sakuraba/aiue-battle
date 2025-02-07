@@ -36,6 +36,8 @@
       });
 
       document.getElementById('startButton').addEventListener('click', () => {
+        console.log('startButton');
+
         socket.emit('startGame');
       });
 
