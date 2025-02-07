@@ -24,4 +24,10 @@ io.on('connection', (socket) => {
     // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
     io.emit('receiveMessage', message);
   });
+  socket.on('sendAnswer', (answer) => {});
+  socket.on('startGame', () => {
+    const clientsCount = io.engine.clientsCount;
+    console.log(`Number of connected clients: ${clientsCount}`);
+    // console.log(socket.client.conn.server.clientsCount);
+  });
 });

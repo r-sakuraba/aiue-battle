@@ -3,6 +3,7 @@
     <h1>simple chat</h1>
     <input id="inputText" type="text" />
     <input id="sendButton" type="submit" />
+    <button id="startButton">start</button>
     <ul id="messageList" />
     <span id="answer1">test</span>
     <span id="answer2">test2</span>
@@ -32,6 +33,10 @@
 
         socket.emit('sendMessage', inputMessage);
         clearText();
+      });
+
+      document.getElementById('startButton').addEventListener('click', () => {
+        socket.emit('startGame');
       });
 
       //  'receiveMessage' イベントの発火を検知
