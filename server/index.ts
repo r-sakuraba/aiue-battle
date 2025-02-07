@@ -17,7 +17,8 @@ server.listen(PORT, () => {
 });
 
 io.on('connection', (socket) => {
-  console.log('user connected222');
+  console.log('user connected');
+  io.sockets.emit('changeConnection', io.engine.clientsCount);
   socket.on('sendMessage', (message) => {
     console.log('Message has been sent: ', message);
 
@@ -30,5 +31,9 @@ io.on('connection', (socket) => {
     const clientsCount = io.engine.clientsCount;
     console.log(`Number of connected clients: ${clientsCount}`);
     // console.log(socket.client.conn.server.clientsCount);
+  });
+
+  socket.on('disconnect', (data) => {
+    io.sockets.emit('changeConnection', io.engine.clientsCount);
   });
 });

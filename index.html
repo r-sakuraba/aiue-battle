@@ -1,6 +1,7 @@
 <html>
   <body>
-    <h1>simple chat</h1>
+    <h1>テストゲーム</h1>
+    <h2>接続数:<spna id="clientsCount">0</spna></h2>
     <input id="inputText" type="text" />
     <input id="sendButton" type="submit" />
     <button id="startButton">start</button>
@@ -46,6 +47,10 @@
       socket.on('receiveMessage', (message) => {
         // 受信したメッセージをulタグに挿入
         addMessageList(message);
+      });
+
+      socket.on('changeConnection', (clientsCount) => {
+        document.getElementById('clientsCount').textContent = clientsCount;
       });
 
       socket.on('answerStatus', (answerObject) => {
