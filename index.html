@@ -2,6 +2,7 @@
   <body>
     <h1>テストゲーム</h1>
     <h2>接続数:<spna id="clientsCount">0</spna></h2>
+    <h2>プレイヤー名:<spna id="name"></spna></h2>
     <input id="inputText" type="text" />
     <input id="sendButton" type="submit" />
     <button id="startButton">start</button>
@@ -51,6 +52,10 @@
 
       socket.on('changeConnection', (clientsCount) => {
         document.getElementById('clientsCount').textContent = clientsCount;
+      });
+
+      socket.on('name', (name) => {
+        document.getElementById('name').textContent = name;
       });
 
       socket.on('answerStatus', (answerObject) => {

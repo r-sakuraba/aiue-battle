@@ -16,9 +16,12 @@ server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
 
+let answerObject = {};
+
 io.on('connection', (socket) => {
   console.log('user connected');
   io.sockets.emit('changeConnection', io.engine.clientsCount);
+  socket.emit('name', socket.id);
   socket.on('sendMessage', (message) => {
     console.log('Message has been sent: ', message);
 
@@ -26,11 +29,12 @@ io.on('connection', (socket) => {
     io.emit('receiveMessage', message);
   });
   socket.on('sendAnswer', (answer) => {});
-  socket.on('startGame', () => {
-    console.log(`server startGame`);
-    const clientsCount = io.engine.clientsCount;
-    console.log(`Number of connected clients: ${clientsCount}`);
-    // console.log(socket.client.conn.server.clientsCount);
+  socket.on('startGame', async () => {
+    const sockets = await io.fetchSockets();
+    answerObject = Object.fromEntries(sockets.map((socket, i) => [socket.id, i]));
+    console.log(`server startGame`, answerObject);
+
+    io.sockets.emit('answerStatus', answerObject);
   });
 
   socket.on('disconnect', (data) => {
