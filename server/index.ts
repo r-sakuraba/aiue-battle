@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const http = require('http');
-const socketIo = require('socket.io');
+import { Server } from 'socket.io';
 
 const app = express();
 const server = http.Server(app);
-const io = socketIo(server);
+const io = new Server(server);
 
 const PORT = 3000;
 
-app.get('/', (req, res) => {
+app.get('/', (req: express.Request, res: express.Response) => {
   res.sendFile(__dirname + '/index.html');
 });
 
@@ -23,9 +23,5 @@ io.on('connection', (socket) => {
 
     // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
     io.emit('receiveMessage', message);
-  });
-  socket.on('sendAnswer', (answer) => {});
-  socket.on('startGame', () => {
-    // console.log(socket.io.);
   });
 });

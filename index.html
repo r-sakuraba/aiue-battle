@@ -4,6 +4,8 @@
     <input id="inputText" type="text" />
     <input id="sendButton" type="submit" />
     <ul id="messageList" />
+    <span id="answer1">test</span>
+    <span id="answer2">test2</span>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -37,6 +39,11 @@
       socket.on('receiveMessage', (message) => {
         // 受信したメッセージをulタグに挿入
         addMessageList(message);
+      });
+
+      socket.on('answerStatus', (answerObject) => {
+        document.getElementById('answer1').value = answerObject.player1;
+        document.getElementById('answer2').value = answerObject.player2;
       });
     </script>
   </body>
