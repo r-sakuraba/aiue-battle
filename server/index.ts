@@ -9,7 +9,7 @@ const io = new Server(server);
 const PORT = 3000;
 
 app.get('/', (req: express.Request, res: express.Response) => {
-  res.sendFile('../index.html');
+  res.sendFile('/opt/render/project/src/index.html');
 });
 
 server.listen(PORT, () => {
