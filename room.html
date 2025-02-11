@@ -14,6 +14,9 @@
     <h2>情報</h2>
     <ul id="infoList"></ul>
 
+    <h2>攻撃ログ</h2>
+    <ul id="attackLog"></ul>
+
     <div id="attackArea">
       <h2>攻撃</h2>
       <input id="attackInput" type="text" />
@@ -122,6 +125,11 @@
           li.appendChild(text);
           ul.appendChild(li);
         });
+
+        const attackUl = document.getElementById('attackLog');
+        attackUl.innerHTML = '';
+        const li = document.createElement('li');
+        const text = document.createTextNode(info.state.attackedStr);
       });
     </script>
   </body>
