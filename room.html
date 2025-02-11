@@ -75,7 +75,7 @@
       getVisibleText = (answerInfo) => {
         let text = '';
         answerInfo.visible.forEach((visible, i) => {
-          text += visible ? answerInfo[i] : '*';
+          text += visible ? answerInfo.answer[i] : '*';
         });
         return text;
       };
