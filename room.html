@@ -11,8 +11,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
-      let _userName = window.location.search.split('=')[1];
-      let _roomName = window.location.search.split('=')[2];
+      const url = new URL(window.location.href);
+      let _userName = url.searchParams.get('name');
+      let _roomName = url.searchParams.get('room');
       let _id2Name = {};
 
       document.getElementById('name').textContent = _userName;
