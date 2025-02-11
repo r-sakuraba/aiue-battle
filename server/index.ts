@@ -12,6 +12,10 @@ app.get('/', (req: express.Request, res: express.Response) => {
   res.sendFile('/opt/render/project/src/index.html');
 });
 
+app.get('/room', (req: express.Request, res: express.Response) => {
+  res.sendFile('/opt/render/project/src/room.html');
+});
+
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
