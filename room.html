@@ -8,6 +8,12 @@
 
     <button id="startButton">開始</button>
 
+    <h2>あなたの情報</h2>
+    <ul id="myInfoList"></ul>
+
+    <h2>情報</h2>
+    <ul id="infoList"></ul>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
@@ -60,11 +66,36 @@
         });
       });
 
-      socket.on('disconnect', () => {
-        console.log('connect');
-        socket.emit('leaveRoom', {
-          roomName,
-          userName,
+      getVisibleText = (answerInfo) => {
+        let text = '';
+        answerInfo.visible.forEach((visible, i) => {
+          text += visible ? answerInfo[i] : '*';
+        });
+        return text;
+      };
+
+      document.getElementById('startButton').addEventListener('click', () => {
+        answer = window.prompt('あなたの答えを入力してください', '');
+        socket.emit('readyGame', answer);
+      });
+
+      socket.on('startGame', (gameInfo) => {
+        console.log('startGame');
+        console.log(gameInfo);
+
+        const myUl = document.getElementById('myInfoList');
+        myUl.innerHTML = '';
+        const myAnsewerText = document.createTextNode('答え:' + gameInfo[socket.id].answer);
+        ul.appendChild(document.createElement('li').appendChild(myAnsewerText));
+        const myVisibleText = document.createTextNode('相手に見えている状態:' + getVisibleText(gameInfo[socket.id]));
+        ul.appendChild(document.createElement('li').appendChild(myVisibleText));
+
+        const ul = document.getElementById('infoList');
+        Object.keys(gameInfo).forEach((socketId) => {
+          const li = document.createElement('li');
+          const text = document.createTextNode(_id2Name[socketId] + ':' + getVisibleText(gameInfo[socketId]));
+          li.appendChild(text);
+          ul.appendChild(li);
         });
       });
     </script>

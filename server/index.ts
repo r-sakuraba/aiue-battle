@@ -24,6 +24,8 @@ let answerObject = {};
 
 let rooms: { [key: string]: { [id: string]: string } } = {};
 
+let aiueBattleList: { [gameId: string]: { info: { [socketId: string]: { answer: string; visible: boolean[] } } } } = {};
+
 io.on('connection', (socket) => {
   console.log('user connected');
   io.sockets.emit('changeConnection', io.engine.clientsCount);
@@ -59,12 +61,16 @@ io.on('connection', (socket) => {
     // Handle answer logic here
   });
 
-  socket.on('startGame', async (roomName) => {
-    const sockets = await io.in(roomName).fetchSockets();
-    answerObject = Object.fromEntries(sockets.map((socket, i) => [socket.id, i]));
-    console.log(`server startGame in room ${roomName}`, answerObject);
+  socket.on('readyGame', async (answer) => {
+    if (!aiueBattleList[_roomName]) {
+      aiueBattleList[_roomName] = { info: {} };
+    }
+    aiueBattleList[_roomName].info[socket.id] = { answer: answer, visible: Array(7).fill(false) };
 
-    io.to(roomName).emit('answerStatus', answerObject);
+    const memberNumInRoom = io.sockets.adapter.rooms.get(_roomName)?.size ?? 0;
+    if (Object.keys(aiueBattleList[_roomName].info).length === memberNumInRoom) {
+      io.to(_roomName).emit('startGame', aiueBattleList[_roomName]);
+    }
   });
 
   socket.on('disconnect', (data) => {
