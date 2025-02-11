@@ -111,11 +111,11 @@
       });
 
       socket.on('attackResult', (info) => {
-        console.log('attackResult', info);
+        console.log('attackResult', info.info);
         const ul = document.getElementById('infoList');
         ul.innerHTML = '';
 
-        Object.keys(info).forEach((socketId) => {
+        Object.keys(info.info).forEach((socketId) => {
           const li = document.createElement('li');
           const text = document.createTextNode(_id2Name[socketId] + ':' + getVisibleText(info[socketId]));
           li.appendChild(text);
