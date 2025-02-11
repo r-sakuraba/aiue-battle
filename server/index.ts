@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', (data) => {
-    if (!_roomName) {
+    if (_roomName) {
       const userName = rooms[_roomName][socket.id];
       delete rooms[_roomName][socket.id];
       socket.leave(_roomName);
