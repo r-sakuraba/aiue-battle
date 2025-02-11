@@ -24,7 +24,12 @@ let answerObject = {};
 
 let rooms: { [key: string]: { [id: string]: string } } = {};
 
-let aiueBattleList: { [gameId: string]: { info: { [socketId: string]: { answer: string; visible: boolean[] } } } } = {};
+let aiueBattleList: {
+  [gameId: string]: {
+    info: { [socketId: string]: { answer: string; visible: boolean[] } };
+    state: { attackedStr: string[] };
+  };
+} = {};
 
 io.on('connection', (socket) => {
   console.log('user connected');
@@ -63,7 +68,7 @@ io.on('connection', (socket) => {
 
   socket.on('readyGame', async (answer) => {
     if (!aiueBattleList[_roomName]) {
-      aiueBattleList[_roomName] = { info: {} };
+      aiueBattleList[_roomName] = { info: {}, state: { attackedStr: [] } };
     }
     aiueBattleList[_roomName].info[socket.id] = { answer: answer, visible: Array(7).fill(false) };
 
@@ -71,6 +76,20 @@ io.on('connection', (socket) => {
     if (Object.keys(aiueBattleList[_roomName].info).length === memberNumInRoom) {
       io.to(_roomName).emit('startGame', aiueBattleList[_roomName]);
     }
+  });
+
+  socket.on('attack', (attack: string) => {
+    aiueBattleList[_roomName].state.attackedStr.push(attack);
+
+    Object.values(aiueBattleList[_roomName].info).forEach(({ answer, visible }) => {
+      for (let i = 0; i < 7; i++) {
+        if (answer[i] === attack) {
+          visible[i] = true;
+        }
+      }
+    });
+
+    io.to(_roomName).emit('attackResult', aiueBattleList[_roomName]);
   });
 
   socket.on('disconnect', (data) => {

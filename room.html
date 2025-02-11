@@ -14,6 +14,12 @@
     <h2>情報</h2>
     <ul id="infoList"></ul>
 
+    <div id="attackArea">
+      <h2>攻撃</h2>
+      <input id="attackInput" type="text" />
+      <button id="attackButton">攻撃</button>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
@@ -76,6 +82,7 @@
 
       document.getElementById('startButton').addEventListener('click', () => {
         answer = window.prompt('あなたの答えを入力してください', '');
+        document.getElementById('startButton').disabled = true;
         socket.emit('readyGame', answer);
       });
 
@@ -88,13 +95,29 @@
         myUl.innerHTML = '';
         const myAnsewerText = document.createTextNode('答え:' + gameInfo[socket.id].answer);
         myUl.appendChild(document.createElement('li').appendChild(myAnsewerText));
-        const myVisibleText = document.createTextNode('相手に見えている状態:' + getVisibleText(gameInfo[socket.id]));
-        myUl.appendChild(document.createElement('li').appendChild(myVisibleText));
 
         const ul = document.getElementById('infoList');
         Object.keys(gameInfo).forEach((socketId) => {
           const li = document.createElement('li');
           const text = document.createTextNode(_id2Name[socketId] + ':' + getVisibleText(gameInfo[socketId]));
+          li.appendChild(text);
+          ul.appendChild(li);
+        });
+      });
+
+      document.getElementById('attackButton').addEventListener('click', () => {
+        const attack = document.getElementById('attackInput').value;
+        socket.emit('attack', attack);
+      });
+
+      socket.on('attackResult', (info) => {
+        console.log('attackResult', info);
+        const ul = document.getElementById('infoList');
+        ul.innerHTML = '';
+
+        Object.keys(info).forEach((socketId) => {
+          const li = document.createElement('li');
+          const text = document.createTextNode(_id2Name[socketId] + ':' + getVisibleText(info[socketId]));
           li.appendChild(text);
           ul.appendChild(li);
         });
