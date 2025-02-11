@@ -68,12 +68,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', (data) => {
-    const userName = rooms[_roomName][socket.id];
-    delete rooms[_roomName][socket.id];
-    socket.leave(_roomName);
-    io.to(_roomName).emit('userLeft', userName);
-    io.to(_roomName).emit('changeId2Name', rooms[_roomName]);
-    console.log(`User ${userName} left room ${_roomName}`);
+    if (!_roomName) {
+      const userName = rooms[_roomName][socket.id];
+      delete rooms[_roomName][socket.id];
+      socket.leave(_roomName);
+      io.to(_roomName).emit('userLeft', userName);
+      io.to(_roomName).emit('changeId2Name', rooms[_roomName]);
+      console.log(`User ${userName} left room ${_roomName}`);
+    }
     io.emit('changeConnection', io.engine.clientsCount);
   });
 });
