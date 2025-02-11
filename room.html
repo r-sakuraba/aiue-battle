@@ -59,6 +59,14 @@
           ul.appendChild(li);
         });
       });
+
+      socket.on('disconnect', () => {
+        console.log('connect');
+        socket.emit('leaveRoom', {
+          roomName,
+          userName,
+        });
+      });
     </script>
   </body>
 </html>
