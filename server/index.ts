@@ -22,22 +22,37 @@ io.on('connection', (socket) => {
   console.log('user connected');
   io.sockets.emit('changeConnection', io.engine.clientsCount);
   socket.emit('name', socket.id);
-  socket.on('sendMessage', (message) => {
-    console.log('Message has been sent: ', message);
 
-    // 'receiveMessage' というイベントを発火、受信したメッセージを全てのクライアントに対して送信する
-    io.emit('receiveMessage', message);
+  socket.on('joinRoom', ({ roomName, userName }) => {
+    socket.join(roomName);
+    io.to(roomName).emit('userJoined', userName);
+    console.log(`User ${userName} joined room ${roomName}`);
   });
-  socket.on('sendAnswer', (answer) => {});
-  socket.on('startGame', async () => {
-    const sockets = await io.fetchSockets();
-    answerObject = Object.fromEntries(sockets.map((socket, i) => [socket.id, i]));
-    console.log(`server startGame`, answerObject);
 
-    io.sockets.emit('answerStatus', answerObject);
+  socket.on('leaveRoom', ({ roomName, userName }) => {
+    socket.leave(roomName);
+    io.to(roomName).emit('userLeft', userName);
+    console.log(`User ${userName} left room ${roomName}`);
+  });
+
+  socket.on('sendMessage', (message, roomName) => {
+    console.log('Message has been sent: ', message);
+    io.to(roomName).emit('receiveMessage', message);
+  });
+
+  socket.on('sendAnswer', (answer, roomName) => {
+    // Handle answer logic here
+  });
+
+  socket.on('startGame', async (roomName) => {
+    const sockets = await io.in(roomName).fetchSockets();
+    answerObject = Object.fromEntries(sockets.map((socket, i) => [socket.id, i]));
+    console.log(`server startGame in room ${roomName}`, answerObject);
+
+    io.to(roomName).emit('answerStatus', answerObject);
   });
 
   socket.on('disconnect', (data) => {
-    io.sockets.emit('changeConnection', io.engine.clientsCount);
+    io.emit('changeConnection', io.engine.clientsCount);
   });
 });

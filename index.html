@@ -2,65 +2,26 @@
   <body>
     <h1>テストゲーム</h1>
     <h2>接続数:<spna id="clientsCount">0</spna></h2>
-    <h2>プレイヤー名:<spna id="name"></spna></h2>
-    <input id="inputText" type="text" />
-    <input id="sendButton" type="submit" />
-    <button id="startButton">start</button>
-    <ul id="messageList" />
-    <span id="answer1">test</span>
-    <span id="answer2">test2</span>
+    <br />
+    <br />
+    <h2>プレイヤー名</h2>
+    <input id="name" type="text" />
+    <h2>部屋番号</h2>
+    <input id="room" type="text" />
+    <button id="enterRoom">入室</button>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
 
-      const clearText = () => {
-        document.getElementById('inputText').value = '';
-      };
-
-      const addMessageList = (message) => {
-        const ul = document.getElementById('messageList');
-        const li = document.createElement('li');
-        const text = document.createTextNode(message);
-        li.appendChild(text);
-        ul.appendChild(li);
-      };
-
-      document.getElementById('sendButton').addEventListener('click', () => {
-        let inputMessage = document.getElementById('inputText').value;
-
-        if (inputMessage === '') {
-          return;
-        }
-
-        socket.emit('sendMessage', inputMessage);
-        clearText();
-      });
-
-      document.getElementById('startButton').addEventListener('click', () => {
-        console.log('startButton');
-
-        socket.emit('startGame');
-      });
-
-      //  'receiveMessage' イベントの発火を検知
-      //  第一引数には受信したメッセージが入る
-      socket.on('receiveMessage', (message) => {
-        // 受信したメッセージをulタグに挿入
-        addMessageList(message);
+      document.getElementById('enterRoom').addEventListener('click', () => {
+        let name = document.getElementById('name').value;
+        let room = document.getElementById('room').value;
+        socket.emit('joinRoom', { userName: name, roomName: room });
       });
 
       socket.on('changeConnection', (clientsCount) => {
         document.getElementById('clientsCount').textContent = clientsCount;
-      });
-
-      socket.on('name', (name) => {
-        document.getElementById('name').textContent = name;
-      });
-
-      socket.on('answerStatus', (answerObject) => {
-        document.getElementById('answer1').value = answerObject.player1;
-        document.getElementById('answer2').value = answerObject.player2;
       });
     </script>
   </body>
