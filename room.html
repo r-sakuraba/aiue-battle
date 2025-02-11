@@ -87,9 +87,9 @@
         const myUl = document.getElementById('myInfoList');
         myUl.innerHTML = '';
         const myAnsewerText = document.createTextNode('答え:' + gameInfo[socket.id].answer);
-        ul.appendChild(document.createElement('li').appendChild(myAnsewerText));
+        myUl.appendChild(document.createElement('li').appendChild(myAnsewerText));
         const myVisibleText = document.createTextNode('相手に見えている状態:' + getVisibleText(gameInfo[socket.id]));
-        ul.appendChild(document.createElement('li').appendChild(myVisibleText));
+        myUl.appendChild(document.createElement('li').appendChild(myVisibleText));
 
         const ul = document.getElementById('infoList');
         Object.keys(gameInfo).forEach((socketId) => {
