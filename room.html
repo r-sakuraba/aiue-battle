@@ -81,7 +81,7 @@
 
       socket.on('startGame', (gameInfo) => {
         console.log('startGame');
-        console.log(gameInfo);
+        console.log(gameInfo, socket.id);
 
         const myUl = document.getElementById('myInfoList');
         myUl.innerHTML = '';
