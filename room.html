@@ -12,18 +12,18 @@
     <script>
       const socket = io();
       const url = new URL(window.location.href);
-      let _userName = url.searchParams.get('name');
-      let _roomName = url.searchParams.get('room');
+      let userName = url.searchParams.get('name');
+      let roomName = url.searchParams.get('room');
       let _id2Name = {};
 
-      document.getElementById('name').textContent = _userName;
-      document.getElementById('room').textContent = _roomName;
+      document.getElementById('name').textContent = userName;
+      document.getElementById('room').textContent = roomName;
 
       socket.on('connect', () => {
         console.log('connect');
         socket.emit('joinRoom', {
-          roomName: window.location.search.split('=')[1],
-          userName: window.location.search.split('=')[2],
+          roomName,
+          userName,
         });
       });
 
@@ -35,7 +35,7 @@
         ul.innerHTML = '';
 
         Object.values(_id2Name).forEach((member) => {
-          if (member === _userName) {
+          if (member === userName) {
             return;
           }
           const li = document.createElement('li');
@@ -50,7 +50,7 @@
         ul.innerHTML = '';
 
         memberList.forEach((member) => {
-          if (member === _userName) {
+          if (member === userName) {
             return;
           }
           const li = document.createElement('li');
