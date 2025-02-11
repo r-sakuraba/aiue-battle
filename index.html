@@ -1,7 +1,7 @@
 <html>
   <body>
     <h1>テストゲーム</h1>
-    <h2>接続数:<spna id="clientsCount">0</spna></h2>
+    <h2>接続数:<span id="clientsCount">0</span></h2>
     <br />
     <br />
     <h2>プレイヤー名</h2>
@@ -17,7 +17,9 @@
       document.getElementById('enterRoom').addEventListener('click', () => {
         let name = document.getElementById('name').value;
         let room = document.getElementById('room').value;
-        socket.emit('joinRoom', { userName: name, roomName: room });
+
+        window.location.href = `/room?room=${room}&name=${name}`;
+        // socket.emit('joinRoom', { userName: name, roomName: room });
       });
 
       socket.on('changeConnection', (clientsCount) => {

@@ -18,20 +18,29 @@ server.listen(PORT, () => {
 
 let answerObject = {};
 
+let rooms: { [key: string]: { [id: string]: string } } = {};
+
 io.on('connection', (socket) => {
   console.log('user connected');
   io.sockets.emit('changeConnection', io.engine.clientsCount);
   socket.emit('name', socket.id);
 
   socket.on('joinRoom', ({ roomName, userName }) => {
+    if (!rooms[roomName]) {
+      rooms[roomName] = {};
+    }
+    rooms[roomName][socket.id] = userName;
     socket.join(roomName);
     io.to(roomName).emit('userJoined', userName);
+    io.to(roomName).emit('changeId2Name', rooms[roomName]);
     console.log(`User ${userName} joined room ${roomName}`);
   });
 
   socket.on('leaveRoom', ({ roomName, userName }) => {
+    delete rooms[roomName][socket.id];
     socket.leave(roomName);
     io.to(roomName).emit('userLeft', userName);
+    io.to(roomName).emit('changeId2Name', rooms[roomName]);
     console.log(`User ${userName} left room ${roomName}`);
   });
 

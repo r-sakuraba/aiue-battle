@@ -1,1 +1,65 @@
-<dir>room!!!</dir>
+<html>
+  <body>
+    <h1>room:<span id="room"></span></h1>
+    <h2>プレイヤー名:<span id="name"></span></h2>
+
+    <h2>部屋にいる人:</h2>
+    <ul id="memberList" />
+
+    <button id="startButton">start</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      let _userName;
+      let _id2Name = {};
+
+      socket.on('connect', () => {
+        console.log('connect');
+        socket.emit('joinRoom', {
+          roomName: window.location.search.split('=')[1],
+          userName: window.location.search.split('=')[2],
+        });
+      });
+
+      socket.on('initRoom', ({ roomName, userName }) => {
+        document.getElementById('room').textContent = roomName;
+        document.getElementById('name').textContent = userName;
+        _userName = userName;
+      });
+
+      socket.on('changeId2Name', (id2Name) => {
+        console.log(id2Name);
+        _id2Name = id2Name;
+
+        const ul = document.getElementById('memberList');
+        ul.innerHTML = '';
+
+        Object.values(_id2Name).forEach((member) => {
+          if (member === _userName) {
+            return;
+          }
+          const li = document.createElement('li');
+          const text = document.createTextNode(member);
+          li.appendChild(text);
+          ul.appendChild(li);
+        });
+      });
+
+      socket.on('memberList', (memberList) => {
+        const ul = document.getElementById('memberList');
+        ul.innerHTML = '';
+
+        memberList.forEach((member) => {
+          if (member === _userName) {
+            return;
+          }
+          const li = document.createElement('li');
+          const text = document.createTextNode(member);
+          li.appendChild(text);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
