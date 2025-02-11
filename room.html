@@ -130,6 +130,8 @@
         attackUl.innerHTML = '';
         const li = document.createElement('li');
         const text = document.createTextNode(info.state.attackedStr);
+        li.appendChild(text);
+        attackUl.appendChild(li);
       });
     </script>
   </body>
