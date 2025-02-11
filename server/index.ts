@@ -28,6 +28,7 @@ io.on('connection', (socket) => {
   console.log('user connected');
   io.sockets.emit('changeConnection', io.engine.clientsCount);
   socket.emit('name', socket.id);
+  let _roomName = '';
 
   socket.on('joinRoom', ({ roomName, userName }) => {
     if (!rooms[roomName]) {
@@ -35,6 +36,7 @@ io.on('connection', (socket) => {
     }
     rooms[roomName][socket.id] = userName;
     socket.join(roomName);
+    _roomName = roomName;
     io.to(roomName).emit('userJoined', userName);
     io.to(roomName).emit('changeId2Name', rooms[roomName]);
     console.log(`User ${userName} joined room ${roomName}`);
@@ -66,6 +68,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', (data) => {
+    const userName = rooms[_roomName][socket.id];
+    delete rooms[_roomName][socket.id];
+    socket.leave(_roomName);
+    io.to(_roomName).emit('userLeft', userName);
+    io.to(_roomName).emit('changeId2Name', rooms[_roomName]);
+    console.log(`User ${userName} left room ${_roomName}`);
     io.emit('changeConnection', io.engine.clientsCount);
   });
 });
