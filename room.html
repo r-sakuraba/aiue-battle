@@ -79,8 +79,9 @@
         socket.emit('readyGame', answer);
       });
 
-      socket.on('startGame', (gameInfo) => {
+      socket.on('startGame', (info) => {
         console.log('startGame');
+        const gameInfo = info.info;
         console.log(gameInfo, socket.id);
 
         const myUl = document.getElementById('myInfoList');
