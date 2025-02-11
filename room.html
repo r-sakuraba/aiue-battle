@@ -11,8 +11,12 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
-      let _userName;
+      let _userName = window.location.search.split('=')[1];
+      let _roomName = window.location.search.split('=')[2];
       let _id2Name = {};
+
+      document.getElementById('name').textContent = _userName;
+      document.getElementById('room').textContent = _roomName;
 
       socket.on('connect', () => {
         console.log('connect');
@@ -20,12 +24,6 @@
           roomName: window.location.search.split('=')[1],
           userName: window.location.search.split('=')[2],
         });
-      });
-
-      socket.on('initRoom', ({ roomName, userName }) => {
-        document.getElementById('room').textContent = roomName;
-        document.getElementById('name').textContent = userName;
-        _userName = userName;
       });
 
       socket.on('changeId2Name', (id2Name) => {
